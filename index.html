@@ -60,9 +60,7 @@
     gap: 1.5rem;
   }
 
-  /* Items live in items.csv — edit that file, not this one.
-     Columns: name,price,note,link,image (image optional;
-     quote any field that contains a comma). */
+  /* Items live in items.csv — see README.md for the format. */
 
   .card {
     background: var(--card);
@@ -209,6 +207,7 @@ fetch("items.csv")
     const grid = document.getElementById("grid");
     for (const row of rows) {
       const item = Object.fromEntries(header.map((h, i) => [h.trim(), (row[i] || "").trim()]));
+      if (!item.name) continue;
       const card = document.createElement("article");
       card.className = "card";
       if (item.image) {
@@ -235,9 +234,11 @@ fetch("items.csv")
         tag.textContent = item.price;
         body.append(tag);
       }
-      if (item.link) {
+      if (/^https?:\/\//i.test(item.link)) {
         const a = document.createElement("a");
         a.href = item.link;
+        a.target = "_blank";
+        a.rel = "noopener";
         a.textContent = "View item →";
         body.append(a);
       }
